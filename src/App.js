@@ -5,7 +5,7 @@ export default function App() {
   return (
     <div className="App">
       <h2>Lucky Draw</h2>
-      <LuckyDraw size={5} />
+      <LuckyDraw initialSize={5} />
     </div>
   );
 }
