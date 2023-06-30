@@ -1,6 +1,6 @@
-export default function Slider({ value, setValue, min = 1, max = 10 }) {
+export default function Slider({ value, setValue, min = 1, max = 10, ...rest}) {
   return (
-    <div className="slidecontainer">
+
       <input
         onInput={(e) => {
           setValue(e.target.value);
@@ -10,7 +10,7 @@ export default function Slider({ value, setValue, min = 1, max = 10 }) {
         max={max}
         value={value}
         className="slider"
+        {...rest}
       />
-    </div>
   );
 }

@@ -24,6 +24,7 @@ export default function ControlPanel({
           <fieldset>
             <legend>size</legend>
             <Slider
+              data-testid={ "size-slider"}
               min={2}
               value={size}
               setValue={(v) => {
@@ -73,7 +74,7 @@ export default function ControlPanel({
       >
         Draw
       </button>
-      <button className="button" onClick={() => handleReset()}>
+      <button className="button" onClick={() => handleReset()}      data-testid="reset-button">
         Reset
       </button>
     </div>

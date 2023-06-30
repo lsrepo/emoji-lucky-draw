@@ -9,33 +9,63 @@ import {render, fireEvent, waitFor, act} from "@testing-library/react";
  */
 describe("LuckyDraw", () => {
     describe("Control Panel", () => {
-        it("adds card when size slider is adjusted", () => {
+        it("adds card when size slider is adjusted", async () => {
+            const { getByTestId, container } = render(<LuckyDraw size={2} />);
+
+            expect(getUnflippedCardCount(container)).toHaveLength(4);
+
+            // adjust size to be 10
+            fireEvent.input(getByTestId("size-slider"), { target: { value: 10 } });
+
+            await waitFor(() =>
+                expect(getUnflippedCardCount(container)).toHaveLength(100)
+            );
         });
 
         it("changes the card content when toggleing between types", () => {
         });
 
-        it("unflips all cards when reset button is clicked", () => {
+        it("unflips all cards when reset button is clicked", async () => {
+            const { getByTestId, container } = render(<LuckyDraw size={2} />);
+
+            // original state: no card is flipped
+            expect(getUnflippedCardCount(container)).toHaveLength(4);
+
+            // Arrange
+            fireEvent.click(getByTestId("draw-button"));
+
+            // Wait until dra finished
+            await waitFor(() =>
+                expect(getFlippedCardCount(container)).toHaveLength(1)
+            );
+
+            // Act: Reset
+            fireEvent.click(getByTestId("reset-button"));
+
+            // Assert
+            await waitFor(() =>
+                expect(getFlippedCardCount(container)).toHaveLength(0)
+            );
         });
     });
 
     describe("Draw", () => {
-        // it("flips all of the cards except one, when it ends", async () => {
-        //   const { getByTestId, container } = render(<LuckyDraw size={2} />);
+        it("flips all of the cards except one, when it ends", async () => {
+          const { getByTestId, container } = render(<LuckyDraw size={2} />);
 
-        //   // original state: no card is flipped
-        //   expect(getUnflippedCardCount(container)).toHaveLength(4);
+          // original state: no card is flipped
+          expect(getUnflippedCardCount(container)).toHaveLength(4);
 
-        //   // Act
-        //   fireEvent.click(getByTestId("draw-button"));
+          // Act
+          fireEvent.click(getByTestId("draw-button"));
 
-        //   // Assert only one card is not flipped
-        //   await waitFor(() =>
-        //     expect(getFlippedCardCount(container)).toHaveLength(1)
-        //   );
-        // });
+          // Assert only one card is not flipped
+          await waitFor(() =>
+            expect(getFlippedCardCount(container)).toHaveLength(1)
+          );
+        });
 
-        test(
+        it(
             "flows confettis when the draw finishes",
             async () => {
                 const {getByTestId, getAllByText, queryAllByText, container} = render(
@@ -43,7 +73,7 @@ describe("LuckyDraw", () => {
                 );
 
                 // original state: no card is flipped
-                expect(queryAllByText("Flipped")).toHaveLength(0);
+                expect(getFlippedCardCount(container)).toHaveLength(0);
 
                 //  draw
                 fireEvent.click(getByTestId("draw-button"));
@@ -54,8 +84,6 @@ describe("LuckyDraw", () => {
             },
         );
 
-        it("takes less time to finish if speed is increased", () => {
-        });
     });
 });
 
