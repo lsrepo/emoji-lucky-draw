@@ -4,7 +4,7 @@ import TweeterEmoji from "../Emoji";
 
 export default function Board({ size, items, type }) {
   return (
-    <div className="board">
+    <div id="board">
       <table>
         <tbody>
           {createIndexedArray(size).map((v, i) => (
@@ -76,8 +76,8 @@ const Cell = (props) => {
     <td>
       <div
         style={{
-          width: `min(${80 / size}vw, 77px)`,
-          height: `min(${80 / size}vw, 77px)`,
+          width: `min(${85 / size}vw, 77px)`,
+          height: `min(${85 / size}vw, min(${85 / size}vh, 77px))`,
         }}
         data-testid="card"
       >

@@ -115,9 +115,20 @@ export default function ControlPanel({
           })}
         </fieldset>
       </div>
+      <span id="drawView" />
       <button
         className="button draw"
-        onClick={createTimer}
+        onClick={() => {
+          const element = document.getElementById("drawView");
+
+          element.scrollIntoView({
+            // behavior: "smooth",
+            block: "start",
+            inline: "nearest",
+          });
+
+          setTimeout(() => createTimer(), 500);
+        }}
         disabled={isRunning}
         data-testid="draw-button"
       >

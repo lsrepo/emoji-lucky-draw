@@ -4,8 +4,8 @@ import "./styles.css";
 export default function App() {
   return (
     <div className="App">
-      <h2>Lucky Draw</h2>
-      <LuckyDraw initialSize={5} />
+      <h1>Lucky Draw</h1>
+      <LuckyDraw initialSize={8} />
     </div>
   );
 }
