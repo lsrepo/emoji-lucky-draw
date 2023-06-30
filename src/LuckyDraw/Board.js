@@ -56,7 +56,7 @@ const NumberCell = (props) => {
         style={{
           width: `min(${80 / size}vw, 77px)`,
           height: `min(${80 / size}vw, 77px)`,
-          fontSize: "7vmin"
+          fontSize: "7vmin",
         }}
         data-testid="card"
       >
@@ -77,7 +77,7 @@ const Cell = (props) => {
       <div
         style={{
           width: `min(${80 / size}vw, 77px)`,
-          height: `min(${80 / size}vw, 77px)`
+          height: `min(${80 / size}vw, 77px)`,
         }}
         data-testid="card"
       >
@@ -86,7 +86,7 @@ const Cell = (props) => {
             {/* <TweeterEmoji n={item.frontValue} itemSize={size} /> */}
             {content}
           </div>
-          <div>{item.flipped ? "Flipped" : ""}</div>
+          <div></div>
         </ReactCardFlip>
       </div>
     </td>

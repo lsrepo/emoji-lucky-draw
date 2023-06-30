@@ -3,34 +3,31 @@ import Slider from "../Input/Slider";
 export default function ControlPanel({
   draw,
   drawSpeed,
-  drawSpeedRef,
   setDrawSpeed,
   setItems,
   isFinalized,
   items,
-  isCompleted,
-  initalItems,
-  candidates,
+  isCompletedRef,
   handleReset,
   size,
   setSize,
   type,
-  setType
+  setType,
 }) {
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <div className="input-group">
         <div className="slider-group">
           <fieldset>
             <legend>size</legend>
             <Slider
-              data-testid={ "size-slider"}
+              data-testid={"size-slider"}
               min={2}
               value={size}
               setValue={(v) => {
                 setSize(v);
                 setItems(DEFAULT_CANDIDATES_NUMBER.slice(0, v * v));
-                isCompleted.current = false;
+                isCompletedRef.current = false;
               }}
             />
           </fieldset>
@@ -38,13 +35,7 @@ export default function ControlPanel({
         <div className="slider-group">
           <fieldset>
             <legend>speed</legend>
-            <Slider
-              value={drawSpeed}
-              setValue={(v) => {
-                setDrawSpeed(v);
-                drawSpeedRef.current = v;
-              }}
-            />
+            <Slider value={drawSpeed} setValue={setDrawSpeed} />
           </fieldset>
         </div>
 
@@ -74,7 +65,11 @@ export default function ControlPanel({
       >
         Draw
       </button>
-      <button className="button" onClick={() => handleReset()}      data-testid="reset-button">
+      <button
+        className="button"
+        onClick={() => handleReset()}
+        data-testid="reset-button"
+      >
         Reset
       </button>
     </div>

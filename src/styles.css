@@ -38,12 +38,15 @@
   color: white;
 }
 
-.slider-group {
-  /* margin-bottom: 30px; */
-}
-
 .board {
   display: flex;
   margin-top: 20px;
   justify-content: center;
+}
+
+.input-group {
+  flex-wrap: wrap;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 5px;
 }

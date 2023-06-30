@@ -4,7 +4,7 @@ import "./styles.css";
 export default function App() {
   return (
     <div className="App">
-      <h1>Lucky Draw</h1>
+      <h2>Lucky Draw</h2>
       <LuckyDraw size={5} />
     </div>
   );

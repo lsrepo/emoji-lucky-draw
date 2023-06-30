@@ -15,7 +15,7 @@ export default function LuckyDraw(props) {
   const [size, setSize] = useState(initialSize);
   const totalSize = useMemo(() => size * size, [size]);
   const [drawSpeed, setDrawSpeed] = useState(10);
-  const drawSpeedRef = useRef(drawSpeed);
+
   const initalItems = useMemo(
     () => DEFAULT_CANDIDATES_NUMBER.slice(0, totalSize),
     [totalSize]
@@ -25,29 +25,32 @@ export default function LuckyDraw(props) {
     return items.filter((item) => !item.out).length === 1;
   }, []);
   const timerRef = useRef();
-  const isCompleted = useRef(false);
-  const isStarted = useRef(false);
+  const isCompletedRef = useRef(false);
+
   const handleReset = useCallback(() => {
-    isCompleted.current = false;
+    isCompletedRef.current = false;
     setItems(initalItems);
   }, [setItems, initalItems]);
   const [type, setType] = useState("countries");
 
+  const removeTimer = useCallback(() => {
+    console.log("Stop trigger");
+    clearInterval(timerRef.current);
+    timerRef.current = null;
+  });
   const eliminate = useCallback(() => {
-    if (isCompleted.current) {
-      console.log("Stop trigger");
-      clearInterval(timerRef.current);
-      timerRef.current = null;
+    if (isCompletedRef.current) {
+      removeTimer();
       return;
     }
 
     setItems((items) => {
       // flip one item that is not "out"
       const indexes = items.filter((item) => !item.out);
-      if (indexes.length === 1) {
-        isCompleted.current = true;
-        clearInterval(timerRef.current);
-        timerRef.current = null;
+      const shouldStop = indexes.length === 1;
+      if (shouldStop) {
+        isCompletedRef.current = true;
+        removeTimer();
         return items;
       }
       console.log("Eliminate");
@@ -57,7 +60,7 @@ export default function LuckyDraw(props) {
           return {
             ...v,
             flipped: !v.flipped,
-            out: true
+            out: true,
           };
         }
         return v;
@@ -65,34 +68,33 @@ export default function LuckyDraw(props) {
     });
   }, []);
 
-  const resetTimer = useCallback(() => {
-    console.log("useCallback: resetTimer");
-
-    // remove timer
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    // create timer
-
+  const createTimer = useCallback(() => {
     console.log("Create new Timer");
     timerRef.current = setInterval(() => {
       eliminate();
-    }, 300 / drawSpeedRef.current);
+    }, 300 / drawSpeed);
+  }, [drawSpeed]);
+
+  const resetTimer = useCallback(() => {
+    if (timerRef.current) {
+      removeTimer();
+      createTimer();
+    }
   }, []);
 
   return (
     <div>
-      {isFinalized(items) ? "isFinalized" : "F"}
       <ControlPanel
-        draw={resetTimer}
+        draw={createTimer}
         drawSpeed={drawSpeed}
-        drawSpeedRef={drawSpeedRef}
-        setDrawSpeed={setDrawSpeed}
+        setDrawSpeed={(v) => {
+          setDrawSpeed(v);
+          resetTimer();
+        }}
         setItems={setItems}
         isFinalized={isFinalized}
         items={items}
-        isCompleted={isCompleted}
+        isCompletedRef={isCompletedRef}
         initalItems={initalItems}
         candidates={candidates}
         handleReset={handleReset}
