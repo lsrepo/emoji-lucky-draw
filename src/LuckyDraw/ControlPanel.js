@@ -5,9 +5,8 @@ export default function ControlPanel({
   drawSpeed,
   setDrawSpeed,
   setItems,
-  isFinalized,
+  isCompleted,
   items,
-  isCompletedRef,
   handleReset,
   size,
   setSize,
@@ -27,7 +26,6 @@ export default function ControlPanel({
               setValue={(v) => {
                 setSize(v);
                 setItems(DEFAULT_CANDIDATES_NUMBER.slice(0, v * v));
-                isCompletedRef.current = false;
               }}
             />
           </fieldset>
@@ -59,15 +57,15 @@ export default function ControlPanel({
       </div>
       <button
         className="button draw"
-        onClick={() => draw()}
-        disabled={isFinalized(items)}
+        onClick={draw}
+        disabled={isCompleted}
         data-testid="draw-button"
       >
         Draw
       </button>
       <button
         className="button"
-        onClick={() => handleReset()}
+        onClick={handleReset}
         data-testid="reset-button"
       >
         Reset

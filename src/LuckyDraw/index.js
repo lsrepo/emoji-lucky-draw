@@ -12,23 +12,25 @@ import { DEFAULT_CANDIDATES_NUMBER } from "./config";
 
 export default function LuckyDraw(props) {
   const { candidates = DEFAULT_CANDIDATES_NUMBER, size: initialSize } = props;
+  const timerRef = useRef();
+
   const [size, setSize] = useState(initialSize);
-  const totalSize = useMemo(() => size * size, [size]);
-  const [drawSpeed, setDrawSpeed] = useState(10);
+  const nItems = useMemo(() => size * size, [size]);
 
   const initalItems = useMemo(
-    () => DEFAULT_CANDIDATES_NUMBER.slice(0, totalSize),
-    [totalSize]
+    () => DEFAULT_CANDIDATES_NUMBER.slice(0, nItems),
+    [nItems]
   );
   const [items, setItems] = useState(initalItems);
-  const isFinalized = useCallback((items) => {
-    return items.filter((item) => !item.out).length === 1;
-  }, []);
-  const timerRef = useRef();
-  const isCompletedRef = useRef(false);
+
+  const [drawSpeed, setDrawSpeed] = useState(10);
+
+  const isCompleted = useMemo(
+    () => items.filter((it) => !it.flipped).length === 1,
+    [items]
+  );
 
   const handleReset = useCallback(() => {
-    isCompletedRef.current = false;
     setItems(initalItems);
   }, [setItems, initalItems]);
   const [type, setType] = useState("countries");
@@ -38,40 +40,33 @@ export default function LuckyDraw(props) {
     clearInterval(timerRef.current);
     timerRef.current = null;
   });
-  const eliminate = useCallback(() => {
-    if (isCompletedRef.current) {
-      removeTimer();
-      return;
-    }
-
+  
+  const flipOne = useCallback(() => {
     setItems((items) => {
-      // flip one item that is not "out"
-      const indexes = items.filter((item) => !item.out);
-      const shouldStop = indexes.length === 1;
+      // flip one item that is not flipped
+      const unflippedItems = items.filter((item) => !item.flipped);
+      const shouldStop = unflippedItems.length === 1;
       if (shouldStop) {
-        isCompletedRef.current = true;
         removeTimer();
         return items;
       }
       console.log("Eliminate");
-      const index = pickOneRandomly(indexes).id;
-      return items.map((v, i) => {
-        if (i === index) {
-          return {
-            ...v,
-            flipped: !v.flipped,
-            out: true,
-          };
-        }
-        return v;
-      });
+      const idToFlip = pickOneRandomly(unflippedItems).id;
+      return items.map((v) =>
+        v.id === idToFlip
+          ? {
+              ...v,
+              flipped: true,
+            }
+          : v
+      );
     });
   }, []);
 
   const createTimer = useCallback(() => {
     console.log("Create new Timer");
     timerRef.current = setInterval(() => {
-      eliminate();
+      flipOne();
     }, 300 / drawSpeed);
   }, [drawSpeed]);
 
@@ -92,10 +87,8 @@ export default function LuckyDraw(props) {
           resetTimer();
         }}
         setItems={setItems}
-        isFinalized={isFinalized}
+        isCompleted={isCompleted}
         items={items}
-        isCompletedRef={isCompletedRef}
-        initalItems={initalItems}
         candidates={candidates}
         handleReset={handleReset}
         setSize={setSize}
@@ -104,7 +97,7 @@ export default function LuckyDraw(props) {
         setType={setType}
       />
       <Board size={size} items={items} type={type} />
-      {isFinalized(items) && <Celebration />}
+      {isCompleted && <Celebration />}
     </div>
   );
 }
